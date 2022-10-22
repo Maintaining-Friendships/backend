@@ -11,11 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const responses_1 = require("../middleware/responses");
 exports.default = {
-    accountInfo: function (req, res) {
+    openEndedQuestion: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            //function that returns the data of the client
+            //Function that returns an open ended question for people to talk about
+            let listOfQuestions = [
+                "What was the most interesting thing you did today?", "Who is your hero?", "What would you change about yourself if you could?"
+            ];
+            let random_idx = Math.floor(Math.random() * listOfQuestions.length);
+            let question = listOfQuestions[random_idx];
             return (0, responses_1.successResponse)(res, {
-                name: "Henry Marks"
+                question: question
             });
         });
     }
