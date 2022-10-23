@@ -16,5 +16,5 @@ app.listen(port, () => {
   console.log(`⚡️[server]: Server!!!! is running at https://localhost:${port}`);
 });
 
-
+app.use(express.json())
 app.use('/api', routes)
