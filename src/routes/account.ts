@@ -8,4 +8,15 @@ router.get('/account-info', function (req: Request, res: Response) {
     return accountController.accountInfo(req, res)
 })
 
+
+router.post('/get-otp', function (req: Request, res: Response) {
+    console.log("get otp")
+    return accountController.getOtp(req, res)
+})
+
+router.post('/verify-otp', function (req: Request, res: Response) {
+    console.log("verify otp")
+    return accountController.getOtp(req, res)
+})
+
 export default router

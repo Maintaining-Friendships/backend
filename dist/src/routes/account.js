@@ -10,4 +10,12 @@ router.get('/account-info', function (req, res) {
     console.log("account routes accessed");
     return accountController_1.default.accountInfo(req, res);
 });
+router.post('/get-otp', function (req, res) {
+    console.log("get otp");
+    return accountController_1.default.getOtp(req, res);
+});
+router.post('/verify-otp', function (req, res) {
+    console.log("verify otp");
+    return accountController_1.default.getOtp(req, res);
+});
 exports.default = router;

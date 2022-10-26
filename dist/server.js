@@ -15,4 +15,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`⚡️[server]: Server!!!! is running at https://localhost:${port}`);
 });
+app.use(express_1.default.json());
 app.use('/api', index_1.default);
