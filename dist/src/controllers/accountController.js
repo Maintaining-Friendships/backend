@@ -11,12 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const responses_1 = require("../middleware/responses");
 const optVerification_1 = require("../middleware/optVerification");
+const token_1 = require("../middleware/token");
 exports.default = {
     accountInfo: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //function that returns the data of the client
             return (0, responses_1.successResponse)(res, {
-                name: "Henry Marks"
+                name: "Henry Marks",
             });
         });
     },
@@ -26,10 +27,19 @@ exports.default = {
             (0, optVerification_1.sendOTP)(req.body.phoneNumber, req, res);
         });
     },
-    verifyOtp: function (req, res) {
+    verifyUser: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            //function that checks the validity of an OTP to verify if the client is authenticated
-            (0, optVerification_1.checkOTP)(req.body.phoneNumber, req.body.oneTimeCode, req, res);
+            //function that checks the validity of an OTP to verify if the client is authenticated and returns token for user
+            let phoneNumber = req.body.phoneNumber;
+            let oneTimeCode = req.body.oneTimeCode;
+            let valid_otp = (0, optVerification_1.checkOTP)(phoneNumber, oneTimeCode, res);
+            if (valid_otp) {
+                let jwt = (0, token_1.createJWT)(phoneNumber, oneTimeCode);
+                return (0, responses_1.successResponse)(res, { jwt: jwt });
+            }
+            else {
+                return (0, responses_1.badRequestResponse)(res, { valid_otp: valid_otp });
+            }
         });
-    }
+    },
 };

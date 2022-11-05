@@ -14,21 +14,24 @@ const sendOTP = (phoneNumber, req, res) => {
         (0, responses_1.badRequestResponse)(res, { phoneNumberFormat: false });
     }
     return client.verify.v2
-        .services("VA48a949965915d8a674d855a900348278")
+        .services(process.env.SERVICE_ID)
         .verifications.create({ to: phoneNumber, channel: "sms" })
         .then((verification) => (0, responses_1.successResponse)(res, { id: verification.sid }));
 };
 exports.sendOTP = sendOTP;
-const checkOTP = (phoneNumber, oneTimeCode, req, res) => {
+const checkOTP = (phoneNumber, oneTimeCode, res) => {
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const client = require("twilio")(accountSid, authToken);
     if (!validatePhoneForE164(phoneNumber)) {
         (0, responses_1.badRequestResponse)(res, { phoneNumberFormat: false });
     }
-    return client.verify.v2
-        .services("VA48a949965915d8a674d855a900348278")
+    client.verify.v2
+        .services(process.env.SERVICE_ID)
         .verificationChecks.create({ to: phoneNumber, code: oneTimeCode })
-        .then((verification_check) => (0, responses_1.successResponse)(res, { status: verification_check.status }));
+        .then((verification_check) => {
+        return verification_check.valid;
+    });
+    return false;
 };
 exports.checkOTP = checkOTP;
