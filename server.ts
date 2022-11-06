@@ -9,7 +9,7 @@ const app: Express = express();
 const port = process.env.PORT;
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
+  res.send('Welcome to the Maintaining Friendships API');
 });
 
 app.listen(port, () => {
