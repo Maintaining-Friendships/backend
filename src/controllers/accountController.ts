@@ -21,6 +21,8 @@ export default {
 
     let valid_otp: boolean = checkOTP(phoneNumber, oneTimeCode, res);
 
+    console.log("is this a valid OTP", valid_otp);
+
     if (valid_otp) {
       let jwt: string = createJWT(phoneNumber, oneTimeCode);
       return successResponse(res, { jwt: jwt });

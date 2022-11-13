@@ -26,12 +26,11 @@ const checkOTP = (phoneNumber, oneTimeCode, res) => {
     if (!validatePhoneForE164(phoneNumber)) {
         (0, responses_1.badRequestResponse)(res, { phoneNumberFormat: false });
     }
-    client.verify.v2
+    return client.verify.v2
         .services(process.env.SERVICE_ID)
         .verificationChecks.create({ to: phoneNumber, code: oneTimeCode })
         .then((verification_check) => {
-        return verification_check.valid;
+        verification_check.valid;
     });
-    return false;
 };
 exports.checkOTP = checkOTP;

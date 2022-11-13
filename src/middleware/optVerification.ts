@@ -36,12 +36,10 @@ export const checkOTP = (
     badRequestResponse(res, { phoneNumberFormat: false });
   }
 
-  client.verify.v2
+  return client.verify.v2
     .services(process.env.SERVICE_ID)
     .verificationChecks.create({ to: phoneNumber, code: oneTimeCode })
     .then((verification_check: { status: string; valid: boolean }) => {
-      return verification_check.valid;
+      verification_check.valid;
     });
-
-  return false;
 };
