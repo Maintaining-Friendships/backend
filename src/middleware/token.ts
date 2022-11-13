@@ -19,10 +19,6 @@ export const verifyJWT = (token: string, res: Response, next: NextFunction) => {
     if (err) {
       return badRequestResponse(res, { error: err });
     }
-    res.json({
-      success: true,
-      decoded: decoded,
-    });
     return next();
   });
 };

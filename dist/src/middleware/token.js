@@ -19,10 +19,6 @@ const verifyJWT = (token, res, next) => {
         if (err) {
             return (0, responses_1.badRequestResponse)(res, { error: err });
         }
-        res.json({
-            success: true,
-            decoded: decoded,
-        });
         return next();
     });
 };
