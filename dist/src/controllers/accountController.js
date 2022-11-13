@@ -32,7 +32,7 @@ exports.default = {
             //function that checks the validity of an OTP to verify if the client is authenticated and returns token for user
             let phoneNumber = req.body.phoneNumber;
             let oneTimeCode = req.body.oneTimeCode;
-            let valid_otp = (0, optVerification_1.checkOTP)(phoneNumber, oneTimeCode, res);
+            let valid_otp = yield (0, optVerification_1.checkOTP)(phoneNumber, oneTimeCode, res);
             console.log("is this a valid OTP", valid_otp);
             if (valid_otp) {
                 let jwt = (0, token_1.createJWT)(phoneNumber, oneTimeCode);

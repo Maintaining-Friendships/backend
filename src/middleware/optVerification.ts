@@ -27,7 +27,7 @@ export const checkOTP = (
   phoneNumber: string,
   oneTimeCode: string,
   res: Response
-): boolean => {
+): Promise<boolean> => {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const client = require("twilio")(accountSid, authToken);
@@ -39,7 +39,8 @@ export const checkOTP = (
   return client.verify.v2
     .services(process.env.SERVICE_ID)
     .verificationChecks.create({ to: phoneNumber, code: oneTimeCode })
-    .then((verification_check: { status: string; valid: boolean }) => {
-      verification_check.valid;
-    });
+    .then(
+      (verification_check: { status: string; valid: boolean }) =>
+        verification_check.valid
+    );
 };

@@ -29,8 +29,6 @@ const checkOTP = (phoneNumber, oneTimeCode, res) => {
     return client.verify.v2
         .services(process.env.SERVICE_ID)
         .verificationChecks.create({ to: phoneNumber, code: oneTimeCode })
-        .then((verification_check) => {
-        verification_check.valid;
-    });
+        .then((verification_check) => verification_check.valid);
 };
 exports.checkOTP = checkOTP;

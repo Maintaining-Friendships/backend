@@ -19,7 +19,7 @@ export default {
     let phoneNumber: string = req.body.phoneNumber;
     let oneTimeCode: string = req.body.oneTimeCode;
 
-    let valid_otp: boolean = checkOTP(phoneNumber, oneTimeCode, res);
+    let valid_otp = await checkOTP(phoneNumber, oneTimeCode, res);
 
     console.log("is this a valid OTP", valid_otp);
 
