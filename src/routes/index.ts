@@ -10,6 +10,6 @@ import chatRoutes from "./chat";
 router.use("/auth", authRoutes);
 router.use("/account", ensureAuthorized, accountRoutes);
 router.use("/stimulus", ensureAuthorized, stimulusRoutes);
-router.use("/chat", chatRoutes);
+router.use("/chat", ensureAuthorized, chatRoutes);
 
 export default router;

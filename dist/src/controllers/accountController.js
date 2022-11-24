@@ -8,9 +8,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const responses_1 = require("../middleware/responses");
+const mongoose_1 = __importDefault(require("mongoose"));
+const userSchema_1 = require("../models/userSchema");
 exports.default = {
+    createAccount: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const uri = process.env.MONGO_URI;
+            mongoose_1.default.connect(uri);
+            const user = yield userSchema_1.USER.create({
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                countryCode: req.body.countryCode,
+                phoneNo: req.body.phoneNo,
+            });
+            return (0, responses_1.successResponse)(res, {
+                user,
+            });
+        });
+    },
     accountInfo: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //function that returns the data of the client

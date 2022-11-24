@@ -13,5 +13,5 @@ const chat_1 = __importDefault(require("./chat"));
 router.use("/auth", auth_routes_1.default);
 router.use("/account", auth_1.default, account_1.default);
 router.use("/stimulus", auth_1.default, stimulus_1.default);
-router.use("/chat", chat_1.default);
+router.use("/chat", auth_1.default, chat_1.default);
 exports.default = router;
