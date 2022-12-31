@@ -7,7 +7,7 @@ export default {
   createAccount: async function (req: Request, res: Response) {
     const uri = process.env.MONGO_URI;
 
-    mongoose.connect(uri);
+    mongoose.connect(uri || "");
 
     const user = await USER.create({
       firstName: req.body.firstName,
