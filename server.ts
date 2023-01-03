@@ -23,5 +23,3 @@ app.use("/api", routes);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
-
-export { admin };

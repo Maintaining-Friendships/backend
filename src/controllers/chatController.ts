@@ -1,14 +1,15 @@
-import { badRequestResponse, successResponse } from "../middleware/responses";
 import { Request, Response } from "express";
-import { sendOTP, checkOTP } from "../middleware/optVerification";
-import { createJWT } from "../middleware/token";
+import * as admin from "firebase-admin";
+import { IChat } from "../models/chatSchema";
+import { IUser } from "../models/userSchema";
+import chooseFriend from "../services/chooseFriend";
 
 export default {
-  chooseFriend: async function (req: Request, res: Response) {
-    //a function that chooses a random friend from the contacts of user
-
-    let listOfFriends = { Andy: 1, Fern: 8, Samek: 9, Henry: 2 };
-
-    successResponse(res, { friend: "Andy" });
+  createChat: async function (req: Request, res: Response) {
+    const friendId: string = await chooseFriend(req.body.userId);
+    let newChat: IChat = {
+      members: [],
+      messages: [],
+    };
   },
 };

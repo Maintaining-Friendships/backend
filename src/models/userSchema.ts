@@ -8,16 +8,16 @@ declare global {
 }
 
 export interface IUser {
-  firstName: String;
-  lastName: String;
-  countryCode: String;
-  phoneNo: String;
-  profilePicture: String;
+  firstName: string;
+  lastName: string;
+  countryCode: string;
+  phoneNo: string;
+  profilePicture: string;
   friends: IFriend[];
 }
 
 export interface IFriend {
-  userID: String;
-  importance: Number;
-  lastReachedOut?: Date | null;
+  userID: string;
+  importance: number;
+  lastReachedOut: Date | null;
 }

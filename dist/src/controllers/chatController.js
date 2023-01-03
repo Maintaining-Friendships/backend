@@ -8,14 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const responses_1 = require("../middleware/responses");
+const chooseFriend_1 = __importDefault(require("../services/chooseFriend"));
 exports.default = {
-    chooseFriend: function (req, res) {
+    createChat: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            //a function that chooses a random friend from the contacts of user
-            let listOfFriends = { Andy: 1, Fern: 8, Samek: 9, Henry: 2 };
-            (0, responses_1.successResponse)(res, { friend: "Andy" });
+            const friendId = yield (0, chooseFriend_1.default)(req.body.userId);
+            let newChat = {
+                members: [],
+                messages: [],
+            };
         });
     },
 };

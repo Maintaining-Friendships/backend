@@ -1,7 +1,5 @@
 import express, { Request, Response } from "express";
 const router = express.Router();
-
-import accountController from "../controllers/accountController";
 import authController from "../controllers/authController";
 
 router.post("/get-otp", function (req: Request, res: Response) {
