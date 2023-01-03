@@ -1,20 +1,23 @@
 import { badRequestResponse, successResponse } from "../middleware/responses";
 import e, { Request, Response } from "express";
-import mongoose from "mongoose";
 import { IUser, USER } from "../models/userSchema";
+import * as admin from "firebase-admin";
+
+// Create a new client
 
 export default {
   createAccount: async function (req: Request, res: Response) {
-    const uri = process.env.MONGO_URI;
+    const collection = admin.firestore().collection("/users");
 
-    mongoose.connect(uri || "");
-
-    const user = await USER.create({
+    let newUser: IUser = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      countryCode: req.body.countryCode,
       phoneNo: req.body.phoneNo,
-    });
+      countryCode: req.body.countryCode,
+      profilePicture: req.body.profilePicture,
+      friends: [],
+    };
+    const user = await collection.add(newUser);
 
     return successResponse(res, {
       user,

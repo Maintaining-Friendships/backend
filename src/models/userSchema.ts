@@ -15,11 +15,9 @@ export interface IUser {
   phoneNo: String;
   profilePicture: String;
   friends: {
-    name: String;
-    phoneNo: String;
     userID: String;
     importance: Number;
-    lastReachedOut: Date;
+    lastReachedOut: String;
   }[];
 }
 
