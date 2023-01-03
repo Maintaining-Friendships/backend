@@ -8,7 +8,6 @@ router.post("/create-account", function (req: Request, res: Response) {
 });
 
 router.get("/account-info", function (req: Request, res: Response) {
-  console.log("account routes accessed");
   return accountController.accountInfo(req, res);
 });
 

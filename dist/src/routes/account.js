@@ -10,7 +10,6 @@ router.post("/create-account", function (req, res) {
     return accountController_1.default.createAccount(req, res);
 });
 router.get("/account-info", function (req, res) {
-    console.log("account routes accessed");
     return accountController_1.default.accountInfo(req, res);
 });
 exports.default = router;

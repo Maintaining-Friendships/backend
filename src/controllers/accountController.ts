@@ -25,8 +25,15 @@ export default {
   },
   accountInfo: async function (req: Request, res: Response) {
     //function that returns the data of the client
-    return successResponse(res, {
-      name: "Henry Marks",
-    });
+    const collection = admin.firestore().collection("/users");
+
+    const snapshot = await collection.doc(req.body.id).get();
+
+    if (snapshot.exists) {
+      const userData = snapshot.data();
+      return successResponse(res, { userData });
+    } else {
+      return badRequestResponse(res, "User not found");
+    }
   },
 };
