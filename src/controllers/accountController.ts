@@ -1,12 +1,13 @@
 import { badRequestResponse, successResponse } from "../middleware/responses";
 import e, { Request, Response } from "express";
-import { IUser, USER } from "../models/userSchema";
+import { IFriend, IUser } from "../models/userSchema";
 import * as admin from "firebase-admin";
 
 // Create a new client
 
 export default {
   createAccount: async function (req: Request, res: Response) {
+    //function that creates a new account for the user
     const collection = admin.firestore().collection("/users");
 
     let newUser: IUser = {
@@ -35,5 +36,25 @@ export default {
     } else {
       return badRequestResponse(res, "User not found");
     }
+  },
+
+  addFriend: async function (req: Request, res: Response) {
+    //function that adds a friend by their ID
+    const document = admin
+      .firestore()
+      .collection("/users")
+      .doc(req.body.userId);
+
+    let newFriend: IFriend = {
+      userID: req.body.friendId,
+      importance: req.body.importance,
+      lastReachedOut: null,
+    };
+
+    const snapshot = await document.update({
+      friends: admin.firestore.FieldValue.arrayUnion(newFriend),
+    });
+
+    return successResponse(res, { snapshot });
   },
 };

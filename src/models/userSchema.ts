@@ -1,9 +1,8 @@
-import mongoose from "mongoose";
-
 declare global {
   namespace Express {
     export interface Request {
       user: IUser;
+      friend: IFriend;
     }
   }
 }
@@ -14,44 +13,11 @@ export interface IUser {
   countryCode: String;
   phoneNo: String;
   profilePicture: String;
-  friends: {
-    userID: String;
-    importance: Number;
-    lastReachedOut: String;
-  }[];
+  friends: IFriend[];
 }
 
-var UserSchema = new mongoose.Schema<IUser>({
-  firstName: {
-    type: String,
-    default: "",
-    required: true,
-    trim: true,
-  },
-  lastName: {
-    type: String,
-    default: "",
-    trim: true,
-  },
-  countryCode: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  phoneNo: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  profilePicture: {
-    type: String,
-    default: null,
-    trim: true,
-  },
-  friends: {
-    type: [],
-    default: [],
-  },
-});
-
-export const USER = mongoose.model<IUser>("individual_user", UserSchema);
+export interface IFriend {
+  userID: String;
+  importance: Number;
+  lastReachedOut?: Date | null;
+}

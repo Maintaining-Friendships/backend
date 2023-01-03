@@ -38,6 +38,7 @@ const admin = __importStar(require("firebase-admin"));
 exports.default = {
     createAccount: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            //function that creates a new account for the user
             const collection = admin.firestore().collection("/users");
             let newUser = {
                 firstName: req.body.firstName,
@@ -65,6 +66,24 @@ exports.default = {
             else {
                 return (0, responses_1.badRequestResponse)(res, "User not found");
             }
+        });
+    },
+    addFriend: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //function that adds a friend by their ID
+            const document = admin
+                .firestore()
+                .collection("/users")
+                .doc(req.body.userId);
+            let newFriend = {
+                userID: req.body.friendId,
+                importance: req.body.importance,
+                lastReachedOut: null,
+            };
+            const snapshot = yield document.update({
+                friends: admin.firestore.FieldValue.arrayUnion(newFriend),
+            });
+            return (0, responses_1.successResponse)(res, { snapshot });
         });
     },
 };

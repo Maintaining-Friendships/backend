@@ -12,4 +12,8 @@ router.post("/create-account", function (req, res) {
 router.get("/account-info", function (req, res) {
     return accountController_1.default.accountInfo(req, res);
 });
+router.post("/add-friend", function (req, res) {
+    console.log("adding friend");
+    return accountController_1.default.addFriend(req, res);
+});
 exports.default = router;
