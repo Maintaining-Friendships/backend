@@ -38,20 +38,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const admin = __importStar(require("firebase-admin"));
 const responses_1 = require("../middleware/responses");
 const chooseFriend_1 = __importDefault(require("../services/chooseFriend"));
+const firestore_1 = require("@google-cloud/firestore");
 exports.default = {
     createChat: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //creates a new chat based on an algorithum in Choose Friend
-            const friendId = yield (0, chooseFriend_1.default)(req.body.userId);
-            const collection = admin.firestore().collection("/chats");
+            const userId = req.body.userId;
+            const friendId = yield (0, chooseFriend_1.default)(userId);
+            const chatCollection = admin.firestore().collection("/chats");
+            const userCollection = admin.firestore().collection("/users");
             let newChat = {
-                members: [req.body.userId, friendId],
+                members: [userId, friendId],
                 messages: [],
             };
-            const chat = yield collection.add(newChat);
+            const chat = yield chatCollection.add(newChat);
+            yield updateFriend(userCollection, userId, friendId);
             return (0, responses_1.successResponse)(res, {
                 chat,
             });
         });
     },
 };
+function updateFriend(userCollection, userId, friendId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = (yield userCollection.doc(userId).get()).data();
+        let friend = user.friends.filter((friend) => friend.userID == friendId)[0];
+        yield userCollection.doc(userId).update({
+            friends: admin.firestore.FieldValue.arrayRemove(friend),
+        });
+        friend.lastReachedOut = firestore_1.Timestamp.now();
+        yield userCollection.doc(userId).update({
+            cities: admin.firestore.FieldValue.arrayUnion(friend),
+        });
+    });
+}
