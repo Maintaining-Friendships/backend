@@ -1,6 +1,4 @@
-import { Request, Response } from "express";
 import * as admin from "firebase-admin";
-import { IChat } from "../models/chatSchema";
 import { IUser } from "../models/userSchema";
 
 const chooseFriend = async (userId: string): Promise<string> => {
@@ -10,7 +8,6 @@ const chooseFriend = async (userId: string): Promise<string> => {
 
   const collection = admin.firestore().collection("/users");
   const snapshot = await collection.doc(userId).get();
-
   let userData: IUser = snapshot.data() as IUser;
 
   const userFriends = userData.friends;
@@ -23,9 +20,8 @@ const chooseFriend = async (userId: string): Promise<string> => {
       friendPoints += 10;
     } else {
       const today = new Date();
-
       const todayTimestamp = today.getTime();
-      const otherTimestamp = lastReachedOut.getTime();
+      const otherTimestamp = lastReachedOut.toDate().getTime();
 
       const diff = otherTimestamp - todayTimestamp;
 

@@ -1,3 +1,5 @@
+import { Timestamp } from "@google-cloud/firestore";
+
 declare global {
   namespace Express {
     export interface Request {
@@ -19,5 +21,5 @@ export interface IUser {
 export interface IFriend {
   userID: string;
   importance: number;
-  lastReachedOut: Date | null;
+  lastReachedOut: Timestamp | null;
 }

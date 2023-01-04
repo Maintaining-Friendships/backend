@@ -34,6 +34,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const responses_1 = require("../middleware/responses");
 const admin = __importStar(require("firebase-admin"));
+const firestore_1 = require("@google-cloud/firestore");
 // Create a new client
 exports.default = {
     createAccount: function (req, res) {
@@ -78,7 +79,7 @@ exports.default = {
             let newFriend = {
                 userID: req.body.friendId,
                 importance: req.body.importance,
-                lastReachedOut: null,
+                lastReachedOut: firestore_1.Timestamp.now(),
             };
             const snapshot = yield document.update({
                 friends: admin.firestore.FieldValue.arrayUnion(newFriend),

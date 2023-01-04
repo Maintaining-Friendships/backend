@@ -2,6 +2,7 @@ import { badRequestResponse, successResponse } from "../middleware/responses";
 import e, { Request, Response } from "express";
 import { IFriend, IUser } from "../models/userSchema";
 import * as admin from "firebase-admin";
+import { Timestamp } from "@google-cloud/firestore";
 
 // Create a new client
 
@@ -48,7 +49,7 @@ export default {
     let newFriend: IFriend = {
       userID: req.body.friendId,
       importance: req.body.importance,
-      lastReachedOut: null,
+      lastReachedOut: Timestamp.now(),
     };
 
     const snapshot = await document.update({

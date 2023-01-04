@@ -50,7 +50,7 @@ const chooseFriend = (userId) => __awaiter(void 0, void 0, void 0, function* () 
         else {
             const today = new Date();
             const todayTimestamp = today.getTime();
-            const otherTimestamp = lastReachedOut.getTime();
+            const otherTimestamp = lastReachedOut.toDate().getTime();
             const diff = otherTimestamp - todayTimestamp;
             const days = diff / 86400000;
             friendPoints += calculateTimePoints(days);

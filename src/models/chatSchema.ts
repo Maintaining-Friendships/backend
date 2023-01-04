@@ -1,3 +1,5 @@
+import { Timestamp } from "@google-cloud/firestore";
+
 declare global {
   namespace Express {
     export interface Request {
@@ -15,5 +17,5 @@ export interface IChat {
 export interface IMessage {
   id: string;
   message: string;
-  time: Date;
+  time: Timestamp;
 }
