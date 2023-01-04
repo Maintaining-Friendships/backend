@@ -9,6 +9,8 @@ RUN npm install --production
 
 COPY . .
 
+RUN npm install typescript
+
 RUN npm run build
 
 EXPOSE 8000
