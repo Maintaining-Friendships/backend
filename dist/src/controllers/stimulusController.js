@@ -38,18 +38,27 @@ exports.default = {
     openEndedQuestion: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //Function that returns an open ended question for people to talk about
-            const collection = admin.firestore().collection("/stimulus");
-            const random = Math.random();
-            let randomDoc = collection.orderBy(admin.firestore.FieldPath.documentId(), random > 0.5 ? "asc" : "desc");
-            randomDoc = randomDoc.limit(1);
-            const snapshot = yield randomDoc.get();
-            const documents = snapshot.docs;
-            if (documents.length > 0) {
-                const randomDocument = documents[0];
-                const documentData = randomDocument.data();
-                return (0, responses_1.successResponse)(res, {
-                    documentData,
-                });
+            // Get a reference to the "items" collection
+            const itemsRef = admin.firestore().collection("/stimulus");
+            // Get a random number between 1 and the total number of documents in the collection
+            const totalDocs = yield itemsRef
+                .select(admin.firestore.FieldPath.documentId())
+                .get();
+            const numDocs = totalDocs.docs.length;
+            const randomNum = Math.floor(Math.random() * numDocs);
+            // Retrieve a single document from the collection, using the random number as the offset
+            const randomDoc = yield itemsRef
+                .orderBy(admin.firestore.FieldPath.documentId())
+                .offset(randomNum)
+                .limit(1)
+                .get();
+            // Print the random document
+            if (randomDoc.docs[0].exists) {
+                let randomQuestion = randomDoc.docs[0].data();
+                (0, responses_1.successResponse)(res, { randomQuestion });
+            }
+            else {
+                (0, responses_1.notFoundResponse)(res);
             }
         });
     },

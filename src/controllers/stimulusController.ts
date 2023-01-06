@@ -1,30 +1,34 @@
-import { successResponse } from "../middleware/responses";
+import { notFoundResponse, successResponse } from "../middleware/responses";
 import { Request, Response } from "express";
 import * as admin from "firebase-admin";
 
 export default {
   openEndedQuestion: async function (req: Request, res: Response) {
     //Function that returns an open ended question for people to talk about
-    const collection = admin.firestore().collection("/stimulus");
+    // Get a reference to the "items" collection
+    const itemsRef = admin.firestore().collection("/stimulus");
 
-    const random = Math.random();
+    // Get a random number between 1 and the total number of documents in the collection
+    const totalDocs = await itemsRef
+      .select(admin.firestore.FieldPath.documentId())
+      .get();
 
-    let randomDoc = collection.orderBy(
-      admin.firestore.FieldPath.documentId(),
-      random > 0.5 ? "asc" : "desc"
-    );
+    const numDocs = totalDocs.docs.length;
+    const randomNum = Math.floor(Math.random() * numDocs);
 
-    randomDoc = randomDoc.limit(1);
+    // Retrieve a single document from the collection, using the random number as the offset
+    const randomDoc = await itemsRef
+      .orderBy(admin.firestore.FieldPath.documentId())
+      .offset(randomNum)
+      .limit(1)
+      .get();
 
-    const snapshot = await randomDoc.get();
-    const documents = snapshot.docs;
-
-    if (documents.length > 0) {
-      const randomDocument = documents[0];
-      const documentData = randomDocument.data();
-      return successResponse(res, {
-        documentData,
-      });
+    // Print the random document
+    if (randomDoc.docs[0].exists) {
+      let randomQuestion = randomDoc.docs[0].data();
+      successResponse(res, { randomQuestion });
+    } else {
+      notFoundResponse(res);
     }
   },
 };
