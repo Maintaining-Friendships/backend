@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 import routes from "./src/routes/index";
 import * as admin from "firebase-admin";
 import serviceAccount from "./serviceAccount.json";
-import cron from "node-cron";
-import chatController from "./src/controllers/chatController";
 
 dotenv.config();
 
