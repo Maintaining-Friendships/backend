@@ -48,6 +48,7 @@ exports.default = {
                 countryCode: req.body.countryCode,
                 profilePicture: req.body.profilePicture,
                 friends: [],
+                lastConvo: null,
             };
             const user = yield collection.add(newUser);
             return (0, responses_1.successResponse)(res, {

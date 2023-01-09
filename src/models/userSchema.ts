@@ -16,6 +16,7 @@ export interface IUser {
   phoneNo: string;
   profilePicture: string;
   friends: IFriend[];
+  lastConvo: Timestamp | null;
 }
 
 export interface IFriend {

@@ -18,6 +18,7 @@ export default {
       countryCode: req.body.countryCode,
       profilePicture: req.body.profilePicture,
       friends: [],
+      lastConvo: null,
     };
     const user = await collection.add(newUser);
 

@@ -58,7 +58,48 @@ exports.default = {
             });
         });
     },
+    createChatCron: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const usersRef = admin.firestore().collection("/users");
+            let userIds = new Set();
+            // Get the current time
+            const threeDaysAgo = new Date();
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+            // Define the query
+            const convoNull = usersRef.where("lastConvo", "==", null);
+            const dateBefore = usersRef.where("lastConvo", "<", admin.firestore.Timestamp.fromDate(threeDaysAgo));
+            yield convoNull.get().then((snapshot) => {
+                snapshot.forEach((doc) => {
+                    userIds.add(doc.id);
+                });
+            });
+            yield dateBefore.get().then((snapshot) => {
+                snapshot.forEach((doc) => {
+                    userIds.add(doc.id);
+                });
+            });
+            userIds.forEach((userId) => __awaiter(this, void 0, void 0, function* () { return yield autoCreateChat(userId); }));
+            (0, responses_1.successResponse)(res, Object.assign({}, userIds.entries));
+        });
+    },
 };
+function autoCreateChat(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //creates a new chat based on an algorithum in Choose Friend
+        const friendId = yield (0, chooseFriend_1.default)(userId);
+        const chatCollection = admin.firestore().collection("/chats");
+        const userCollection = admin.firestore().collection("/users");
+        let newChat = {
+            members: [userId, friendId],
+            messages: [],
+        };
+        const chat = yield chatCollection.add(newChat);
+        yield updateFriend(userCollection, userId, friendId);
+        yield userCollection.doc(userId).update({
+            lastConvo: firestore_1.Timestamp.now(),
+        });
+    });
+}
 function updateFriend(userCollection, userId, friendId) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = (yield userCollection.doc(userId).get()).data();
@@ -68,7 +109,7 @@ function updateFriend(userCollection, userId, friendId) {
         });
         friend.lastReachedOut = firestore_1.Timestamp.now();
         yield userCollection.doc(userId).update({
-            cities: admin.firestore.FieldValue.arrayUnion(friend),
+            friends: admin.firestore.FieldValue.arrayUnion(friend),
         });
     });
 }
