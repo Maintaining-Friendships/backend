@@ -1,10 +1,6 @@
 import { badRequestResponse, successResponse } from "./responses";
 import { Request, Response } from "express";
-
-const validatePhoneForE164 = (phoneNumber: string) => {
-  const regEx = /^\+[1-9]\d{10,14}$/;
-  return regEx.test(phoneNumber);
-};
+import validatePhoneForE164 from "../services/validatePhone";
 
 export const sendOTP = (phoneNumber: string, req: Request, res: Response) => {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;

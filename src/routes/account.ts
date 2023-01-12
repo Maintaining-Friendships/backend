@@ -16,4 +16,8 @@ router.post("/add-friend", function (req: Request, res: Response) {
   return accountController.addFriend(req, res);
 });
 
+router.post("/add-friend-phone", function (req: Request, res: Response) {
+  return accountController.addFriendByPhone(req, res);
+});
+
 export default router;

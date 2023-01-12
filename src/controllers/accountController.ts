@@ -51,6 +51,7 @@ export default {
       userID: req.body.friendId,
       importance: req.body.importance,
       lastReachedOut: Timestamp.now(),
+      friendsPhone: req.body.friendsPhone,
     };
 
     const snapshot = await document.update({
@@ -58,5 +59,46 @@ export default {
     });
 
     return successResponse(res, { snapshot });
+  },
+
+  addFriendByPhone: async function (req: Request, res: Response) {
+    //fumction that searches for friend by Phone number, if it does it associates the account with an ID if not just adds the phone NO
+    const friendsPhone: string = req.body.friendPhone;
+    const individualUserId: string = req.body.userId;
+    const importance: number = req.body.importance;
+
+    const usersCollection = admin.firestore().collection("/users");
+    const individualUser = usersCollection.doc(individualUserId);
+
+    const query = usersCollection.where("phoneNo", "==", friendsPhone);
+
+    const snapshot = await query.get();
+
+    if (snapshot.empty) {
+      let newFriend: IFriend = {
+        userID: null,
+        importance: importance,
+        lastReachedOut: Timestamp.now(),
+        friendsPhone: friendsPhone,
+      };
+
+      const createdFriend = await individualUser.update({
+        friends: admin.firestore.FieldValue.arrayUnion(newFriend),
+      });
+      return successResponse(res, { createdFriend });
+    } else {
+      const friendAccountID: string = snapshot.docs[0].id;
+
+      let newFriend: IFriend = {
+        userID: friendAccountID,
+        importance: importance,
+        lastReachedOut: Timestamp.now(),
+        friendsPhone: friendsPhone,
+      };
+      const createdFriend = await individualUser.update({
+        friends: admin.firestore.FieldValue.arrayUnion(newFriend),
+      });
+      return successResponse(res, { createdFriend });
+    }
   },
 };

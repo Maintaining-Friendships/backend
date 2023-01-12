@@ -20,7 +20,8 @@ export interface IUser {
 }
 
 export interface IFriend {
-  userID: string;
+  userID: string | null;
   importance: number;
   lastReachedOut: Timestamp | null;
+  friendsPhone: string;
 }
