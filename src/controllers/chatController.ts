@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as admin from "firebase-admin";
 import { successResponse } from "../middleware/responses";
-import { createChat } from "../services/autoCreateChat";
+import { createChat } from "../services/chat/autoCreateChat";
 
 export default {
   createChat: async function (req: Request, res: Response) {

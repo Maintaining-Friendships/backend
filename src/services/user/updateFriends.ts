@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { IUser } from "../models/userSchema";
+import { IUser } from "../../models/userSchema";
 import { Timestamp } from "@google-cloud/firestore";
 
 //attempt to paramerterize these two functions in the future

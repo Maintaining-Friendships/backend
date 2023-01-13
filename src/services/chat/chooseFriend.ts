@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { IUser } from "../models/userSchema";
+import { IUser } from "../../models/userSchema";
 
 const chooseFriend = async (userId: string): Promise<string> => {
   //for each friend, find the length of time since last reached out, then find the importance of the relationship
