@@ -4,18 +4,22 @@ import * as admin from "firebase-admin";
 import { Timestamp } from "@google-cloud/firestore";
 import { IChat } from "../models/chatSchema";
 import { updateFriendID, updateFriendPhoneNo } from "./updateFriends";
+import { getStimulus } from "./selectQuestion";
 
-async function autoCreateChat(userId: string) {
+async function createChat(userId: string) {
   //creates a new chat based on an algorithum in Choose Friend
   //the friend can either be a Phone Number or a User ID
   const friend: string = await chooseFriend(userId);
   const chatCollection = admin.firestore().collection("/chats");
   const userCollection = admin.firestore().collection("/users");
+  const stimulus: string = await getStimulus();
 
   let newChat: IChat = {
     members: [userId, friend],
     messages: [],
+    stimulus: stimulus,
   };
+
   await chatCollection.add(newChat);
   await userCollection.doc(userId).update({
     lastConvo: Timestamp.now(),
@@ -31,4 +35,4 @@ async function autoCreateChat(userId: string) {
   }
 }
 
-export { autoCreateChat };
+export { createChat };
