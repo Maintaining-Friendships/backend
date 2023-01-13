@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import * as admin from "firebase-admin";
 import { successResponse } from "../middleware/responses";
 import { IChat } from "../models/chatSchema";
-import { IUser } from "../models/userSchema";
 import chooseFriend from "../services/chooseFriend";
 import { Timestamp } from "@google-cloud/firestore";
 import validatePhoneForE164 from "../services/validatePhone";
+import { updateFriendID, updateFriendPhoneNo } from "../services/updateFriends";
+import { autoCreateChat } from "../services/autoCreateChat";
 
 export default {
   createChat: async function (req: Request, res: Response) {
@@ -14,29 +15,33 @@ export default {
     //creates a new chat based on an algorithum in Choose Friend
     //the friend can either be a Phone Number or a User ID
     const friend: string = await chooseFriend(userId);
+
+    const chatCollection = admin.firestore().collection("/chats");
+    const userCollection = admin.firestore().collection("/users");
+
+    let newChat: IChat = {
+      members: [userId, friend],
+      messages: [],
+    };
+
+    const chat = await chatCollection.add(newChat);
+
+    await userCollection.doc(userId).update({
+      lastConvo: Timestamp.now(),
+    });
+
     if (validatePhoneForE164(friend)) {
       //the user only has a phone Number
+      updateFriendPhoneNo(userCollection, userId, friend);
     } else {
       //this means the value is a User ID
-      const chatCollection = admin.firestore().collection("/chats");
-      const userCollection = admin.firestore().collection("/users");
 
-      let newChat: IChat = {
-        members: [userId, friend],
-        messages: [],
-      };
-
-      const chat = await chatCollection.add(newChat);
-
-      await updateFriend(userCollection, userId, friend);
-      await userCollection.doc(userId).update({
-        lastConvo: Timestamp.now(),
-      });
-
-      return successResponse(res, {
-        chat,
-      });
+      await updateFriendID(userCollection, userId, friend);
     }
+
+    return successResponse(res, {
+      chat,
+    });
   },
   createChatCron: async function (req: Request, res: Response) {
     const usersRef = admin.firestore().collection("/users");
@@ -71,47 +76,3 @@ export default {
     successResponse(res, { ...userIds.entries });
   },
 };
-async function autoCreateChat(userId: string) {
-  //creates a new chat based on an algorithum in Choose Friend
-  //the friend can either be a Phone Number or a User ID
-  const friend: string = await chooseFriend(userId);
-  if (validatePhoneForE164(friend)) {
-    //the user only has a phone Number
-  } else {
-    //this means the value is a User ID
-    const chatCollection = admin.firestore().collection("/chats");
-    const userCollection = admin.firestore().collection("/users");
-
-    let newChat: IChat = {
-      members: [userId, friend],
-      messages: [],
-    };
-
-    await chatCollection.add(newChat);
-
-    await updateFriend(userCollection, userId, friend);
-    await userCollection.doc(userId).update({
-      lastConvo: Timestamp.now(),
-    });
-  }
-}
-
-async function updateFriend(
-  userCollection: admin.firestore.CollectionReference<admin.firestore.DocumentData>,
-  userId: any,
-  friendId: string
-) {
-  const user = (await userCollection.doc(userId).get()).data() as IUser;
-
-  let friend = user.friends.filter((friend) => friend.userID == friendId)[0];
-
-  await userCollection.doc(userId).update({
-    friends: admin.firestore.FieldValue.arrayRemove(friend),
-  });
-
-  friend.lastReachedOut = Timestamp.now();
-
-  await userCollection.doc(userId).update({
-    friends: admin.firestore.FieldValue.arrayUnion(friend),
-  });
-}
