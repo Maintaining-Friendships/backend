@@ -42,16 +42,21 @@ export default {
 
   addFriend: async function (req: Request, res: Response) {
     //function that adds a friend by their ID
+
+    const friendID = req.body.friendId;
+    const importance = req.body.importance;
+    const friendsPhone = req.body.friendsPhone;
+
     const document = admin
       .firestore()
       .collection("/users")
-      .doc(req.body.userId);
+      .doc(req.body.friendId);
 
     let newFriend: IFriend = {
-      userID: req.body.friendId,
-      importance: req.body.importance,
+      userID: friendID,
+      importance: importance,
       lastReachedOut: Timestamp.now(),
-      friendsPhone: req.body.friendsPhone,
+      friendsPhone: friendsPhone,
     };
 
     const snapshot = await document.update({
@@ -63,8 +68,8 @@ export default {
 
   addFriendByPhone: async function (req: Request, res: Response) {
     //fumction that searches for friend by Phone number, if it does it associates the account with an ID if not just adds the phone NO
-    const friendsPhone: string = req.body.friendPhone;
-    const individualUserId: string = req.body.userId;
+    const friendsPhone: string = req.body.friendsPhone;
+    const individualUserId: string = req.body.individualUserId;
     const importance: number = req.body.importance;
 
     const usersCollection = admin.firestore().collection("/users");

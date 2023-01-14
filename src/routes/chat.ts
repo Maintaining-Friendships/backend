@@ -11,4 +11,8 @@ router.post("/create-chat-cron", function (req: Request, res: Response) {
   return chatController.createChatCron(req, res);
 });
 
+router.post("/send-message", function (req: Request, res: Response) {
+  return chatController.sendMessage(req, res);
+});
+
 export default router;

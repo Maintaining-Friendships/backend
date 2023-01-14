@@ -11,12 +11,11 @@ declare global {
 
 export interface IChat {
   members: string[];
-  messages: IMessage[];
   stimulus: string;
 }
 
 export interface IMessage {
-  id: string;
+  senderId: string;
   message: string;
   time: Timestamp;
 }

@@ -2,7 +2,7 @@ import chooseFriend from "./chooseFriend";
 import validatePhoneForE164 from "../validatePhone";
 import * as admin from "firebase-admin";
 import { Timestamp } from "@google-cloud/firestore";
-import { IChat } from "../../models/chatSchema";
+import { IChat, IMessage } from "../../models/chatSchema";
 import { updateFriendID, updateFriendPhoneNo } from "../user/updateFriends";
 import { getStimulus } from "../stimulus/selectQuestion";
 
@@ -16,11 +16,19 @@ async function createChat(userId: string) {
 
   let newChat: IChat = {
     members: [userId, friend],
-    messages: [],
     stimulus: stimulus,
   };
 
-  await chatCollection.add(newChat);
+  let chat = await chatCollection.add(newChat);
+
+  let stimulusChat: IMessage = {
+    senderId: "adminBot",
+    message: stimulus,
+    time: Timestamp.now(),
+  };
+
+  chatCollection.doc(chat.id).collection("/messages").add(stimulusChat);
+
   await userCollection.doc(userId).update({
     lastConvo: Timestamp.now(),
   });
