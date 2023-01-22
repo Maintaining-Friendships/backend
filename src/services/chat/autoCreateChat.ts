@@ -5,6 +5,7 @@ import { Timestamp } from "@google-cloud/firestore";
 import { IChat, IMessage } from "../../models/chatSchema";
 import { updateFriendID, updateFriendPhoneNo } from "../user/updateFriends";
 import { getStimulus } from "../stimulus/selectQuestion";
+import { checkChatOverlap } from "./checkChatOverlap";
 
 async function createChat(userId: string) {
   //creates a new chat based on an algorithum in Choose Friend
@@ -14,20 +15,36 @@ async function createChat(userId: string) {
   const userCollection = admin.firestore().collection("/users");
   const stimulus: string = await getStimulus();
 
-  let newChat: IChat = {
-    members: [userId, friend],
-    stimulus: stimulus,
-  };
+  const sharedChatIds = await checkChatOverlap(chatCollection, userId, friend);
 
-  let chat = await chatCollection.add(newChat);
+  if (sharedChatIds.length != 0) {
+    const existingChatId = sharedChatIds[0];
+    // Update the existing chat with the new stimulus
+    await chatCollection.doc(existingChatId).update({ stimulus: stimulus });
+    let stimulusChat: IMessage = {
+      senderId: "adminBot",
+      message: stimulus,
+      time: Timestamp.now(),
+    };
+    chatCollection
+      .doc(existingChatId)
+      .collection("/messages")
+      .add(stimulusChat);
+  } else {
+    let newChat: IChat = {
+      members: [userId, friend],
+      stimulus: stimulus,
+    };
 
-  let stimulusChat: IMessage = {
-    senderId: "adminBot",
-    message: stimulus,
-    time: Timestamp.now(),
-  };
+    let chat = await chatCollection.add(newChat);
 
-  chatCollection.doc(chat.id).collection("/messages").add(stimulusChat);
+    let stimulusChat: IMessage = {
+      senderId: "adminBot",
+      message: stimulus,
+      time: Timestamp.now(),
+    };
+    chatCollection.doc(chat.id).collection("/messages").add(stimulusChat);
+  }
 
   await userCollection.doc(userId).update({
     lastConvo: Timestamp.now(),
