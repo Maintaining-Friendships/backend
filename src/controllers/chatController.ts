@@ -54,14 +54,22 @@ export default {
     const chatId = req.body.chatId;
     const senderId = req.body.senderId;
     const message = req.body.message;
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const companyPhone = process.env.COMPANY_PHONE;
+
+    const client = require("twilio")(accountSid, authToken);
 
     const chatsRef = admin.firestore().collection("/chats");
     const snapshot = chatsRef.doc(chatId);
     const currentChat = (await snapshot.get()).data() as IChat;
 
-    const containsPhone = currentChat.members.some((member) =>
-      validatePhoneForE164(member)
-    );
+    const phoneNumber = currentChat.members.find((member) => {
+      const phone = validatePhoneForE164(member);
+      if (phone) {
+        return phone;
+      }
+    });
 
     let messagesCollection = snapshot.collection("/messages");
 
@@ -71,9 +79,17 @@ export default {
       time: Timestamp.now(),
     };
 
-    if (containsPhone) {
+    if (phoneNumber) {
       //send a message via twillio
       console.log("Send via Twillio");
+      console.log(phoneNumber);
+      client.messages
+        .create({
+          body: message,
+          from: companyPhone,
+          to: phoneNumber,
+        })
+        .then((message: { sid: any }) => console.log(message.sid));
     }
 
     messagesCollection.add(newMessage);
