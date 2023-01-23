@@ -62,8 +62,10 @@ export default {
   },
   receiveSms: async function (req: Request, res: Response) {
     //find what chat to send this message by looking at the last message we have sent to this person!!!!
-    const response = new MessagingResponse();
-    console.log("THIS IS THE BODY PLEASE SHOW THIS!!!!!: " + req.body.Body);
-    console.log(req.body.Body);
+    const twiml = new MessagingResponse();
+
+    twiml.message("The Robots are coming! Head for the hills!");
+
+    res.type("text/xml").send(twiml.toString());
   },
 };
