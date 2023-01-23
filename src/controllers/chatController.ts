@@ -61,6 +61,7 @@ export default {
     successResponse(res, { newMessage });
   },
   receiveSms: async function (req: Request, res: Response) {
+    //find what chat to send this message by looking at the last message we have sent to this person!!!!
     const response = new MessagingResponse();
     console.log("THIS IS THE BODY PLEASE SHOW THIS!!!!!: " + req.body.Body);
     console.log(req.body.Body);

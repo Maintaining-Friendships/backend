@@ -4,12 +4,8 @@ const twilio = require("twilio");
 
 import chatController from "../controllers/chatController";
 
-router.post(
-  "/receive-sms",
-  twilio.webhook(),
-  function (req: Request, res: Response) {
-    return chatController.receiveSms(req, res);
-  }
-);
+router.post("/receive-sms", function (req: Request, res: Response) {
+  return chatController.receiveSms(req, res);
+});
 
 export default router;
