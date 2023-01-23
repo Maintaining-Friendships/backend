@@ -15,4 +15,8 @@ router.post("/send-message", function (req: Request, res: Response) {
   return chatController.sendMessage(req, res);
 });
 
+router.post("/receive-sms", function (req: Request, res: Response) {
+  return chatController.receiveSms(req, res);
+});
+
 export default router;
