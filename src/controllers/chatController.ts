@@ -62,6 +62,7 @@ export default {
   },
   receiveSms: async function (req: Request, res: Response) {
     const response = new MessagingResponse();
+    console.log("THIS IS THE BODY PLEASE SHOW THIS!!!!!: " + req.body.Body);
     console.log(req.body.Body);
   },
 };
