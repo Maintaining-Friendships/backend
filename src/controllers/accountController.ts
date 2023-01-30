@@ -15,7 +15,6 @@ export default {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       phoneNo: req.body.phoneNo,
-      countryCode: req.body.countryCode,
       profilePicture: req.body.profilePicture,
       friends: [],
       lastConvo: null,

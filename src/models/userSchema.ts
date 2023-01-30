@@ -12,7 +12,6 @@ declare global {
 export interface IUser {
   firstName: string;
   lastName: string;
-  countryCode: string;
   phoneNo: string;
   profilePicture: string;
   friends: IFriend[];
