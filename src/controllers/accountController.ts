@@ -50,7 +50,7 @@ export default {
 
     if (snapshot.exists) {
       const userData = snapshot.data();
-      return successResponse(res, { userData });
+      return successResponse(res, userData);
     } else {
       return badRequestResponse(res, "User not found");
     }
