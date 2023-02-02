@@ -15,7 +15,7 @@ export default {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       phoneNo: req.body.phoneNo,
-      profilePicture: req.body.profilePicture,
+      profilePicture: "",
       friends: [],
       lastConvo: null,
     };
@@ -25,11 +25,28 @@ export default {
       user,
     });
   },
+  uploadProfilePhoto: async function (req: Request, res: Response) {
+    //send the file to the server, then upload it to the firestore database
+    const image = req.body.file;
+
+    console.log(image);
+
+    if (!image) badRequestResponse(res);
+
+    // if (/^image/.test(image.mimetype)) return badRequestResponse(res);
+
+    const bucket = admin.storage().bucket();
+
+    successResponse(res, { image: image });
+
+    //bucket.file()
+  },
   accountInfo: async function (req: Request, res: Response) {
     //function that returns the data of the client
+    let userId: string = req.params.id;
     const collection = admin.firestore().collection("/users");
 
-    const snapshot = await collection.doc(req.body.id).get();
+    const snapshot = await collection.doc(userId).get();
 
     if (snapshot.exists) {
       const userData = snapshot.data();
@@ -106,3 +123,7 @@ export default {
     }
   },
 };
+
+interface ImageReq extends Request {
+  file: any;
+}

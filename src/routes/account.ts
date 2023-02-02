@@ -7,7 +7,7 @@ router.post("/create-account", function (req: Request, res: Response) {
   return accountController.createAccount(req, res);
 });
 
-router.get("/account-info", function (req: Request, res: Response) {
+router.get("/account-info/:id", function (req: Request, res: Response) {
   return accountController.accountInfo(req, res);
 });
 
@@ -18,6 +18,10 @@ router.post("/add-friend", function (req: Request, res: Response) {
 
 router.post("/add-friend-phone", function (req: Request, res: Response) {
   return accountController.addFriendByPhone(req, res);
+});
+
+router.post("/upload-profile", function (req: Request, res: Response) {
+  return accountController.uploadProfilePhoto(req, res);
 });
 
 export default router;
