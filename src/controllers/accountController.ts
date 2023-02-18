@@ -19,11 +19,11 @@ export default {
       friends: [],
       lastConvo: null,
     };
-    const user = await collection.add(newUser);
+    const request = await collection.add(newUser);
 
-    return successResponse(res, {
-      user,
-    });
+    let user = await request.get();
+
+    return successResponse(res, { user: user.data(), userId: user.id });
   },
   uploadProfilePhoto: async function (req: Request, res: Response) {
     //send the file to the server, then upload it to the firestore database
@@ -52,7 +52,7 @@ export default {
       const userData = snapshot.data();
       return successResponse(res, userData);
     } else {
-      return badRequestResponse(res, "User not found");
+      return badRequestResponse(res, { problem: "User not found" });
     }
   },
 
