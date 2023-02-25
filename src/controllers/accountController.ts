@@ -71,21 +71,23 @@ export default {
 
   addFriend: async function (req: Request, res: Response) {
     //function that adds a friend by their ID
-
+    const userId = req.body.userID;
     const friendID = req.body.friendId;
     const importance = req.body.importance;
     const friendsPhone = req.body.friendsPhone;
 
-    const document = admin
-      .firestore()
-      .collection("/users")
-      .doc(req.body.friendId);
+    const document = admin.firestore().collection("/users").doc(userId);
+
+    const friend = (
+      await admin.firestore().collection("/users").doc(friendID).get()
+    ).data();
 
     let newFriend: IFriend = {
       userID: friendID,
       importance: importance,
       lastReachedOut: Timestamp.now(),
       friendsPhone: friendsPhone,
+      name: friend?.firstName ?? "",
     };
 
     const snapshot = await document.update({
@@ -100,6 +102,7 @@ export default {
     const friendsPhone: string = req.body.friendsPhone;
     const individualUserId: string = req.body.individualUserId;
     const importance: number = req.body.importance;
+    const friendName: string = req.body.friendName;
 
     const usersCollection = admin.firestore().collection("/users");
     const individualUser = usersCollection.doc(individualUserId);
@@ -114,6 +117,7 @@ export default {
         importance: importance,
         lastReachedOut: Timestamp.now(),
         friendsPhone: friendsPhone,
+        name: friendName,
       };
 
       const createdFriend = await individualUser.update({
@@ -128,6 +132,7 @@ export default {
         importance: importance,
         lastReachedOut: Timestamp.now(),
         friendsPhone: friendsPhone,
+        name: friendName,
       };
       const createdFriend = await individualUser.update({
         friends: admin.firestore.FieldValue.arrayUnion(newFriend),

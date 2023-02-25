@@ -23,4 +23,5 @@ export interface IFriend {
   importance: number;
   lastReachedOut: Timestamp | null;
   friendsPhone: string;
+  name: string;
 }
