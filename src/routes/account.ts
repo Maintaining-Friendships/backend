@@ -24,4 +24,8 @@ router.post("/upload-profile", function (req: Request, res: Response) {
   return accountController.uploadProfilePhoto(req, res);
 });
 
+router.post("/login-user", function (req: Request, res: Response) {
+  return accountController.autoLoginUser(req, res);
+});
+
 export default router;

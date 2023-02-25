@@ -25,6 +25,19 @@ export default {
 
     return successResponse(res, { user: user.data(), userId: user.id });
   },
+
+  autoLoginUser: async function (req: Request, res: Response) {
+    let userId: string = req.body.id;
+    const collection = admin.firestore().collection("/users");
+
+    const snapshot = await collection.doc(userId).get();
+
+    if (snapshot.exists) {
+      return successResponse(res, { userCreated: true });
+    } else {
+      return badRequestResponse(res, { problem: "User not found" });
+    }
+  },
   uploadProfilePhoto: async function (req: Request, res: Response) {
     //send the file to the server, then upload it to the firestore database
     const image = req.body.file;
