@@ -33,7 +33,7 @@ async function sendMessage(chatId: string, senderId: string, message: string) {
     //send a message via twillio
     console.log("Send via Twillio");
     console.log(phoneNumber);
-    client.messages
+    await client.messages
       .create({
         body: message,
         from: companyPhone,
