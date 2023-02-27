@@ -39,7 +39,9 @@ async function sendMessage(chatId: string, senderId: string, message: string) {
         from: companyPhone,
         to: phoneNumber,
       })
-      .then((message: { sid: any }) => console.log(message.sid));
+      .then((message: { sid: any }) =>
+        console.log("message ID: " + message.sid)
+      );
   }
 
   messagesCollection.add(newMessage);
