@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { badRequestResponse } from "./responses";
 import { verifyJWT } from "./token";
 // import { optVerification } from "./optVerification";
-
+//lol
 const ensureAuthorized = (req: Request, res: Response, next: NextFunction) => {
   let authToken: string | undefined = req.headers["authorization"];
 
