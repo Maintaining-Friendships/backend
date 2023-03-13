@@ -17,6 +17,19 @@ async function createChat(userId: string) {
 
   const sharedChatIds = await checkChatOverlap(chatCollection, userId, friend);
 
+  await userCollection.doc(userId).update({
+    lastConvo: Timestamp.now(),
+  });
+
+  if (validatePhoneForE164(friend)) {
+    //the user only has a phone Number
+    updateFriendPhoneNo(userCollection, userId, friend);
+  } else {
+    //this means the value is a User ID
+
+    await updateFriendID(userCollection, userId, friend);
+  }
+
   if (sharedChatIds.length != 0) {
     const existingChatId = sharedChatIds[0];
     // Update the existing chat with the new stimulus
@@ -30,6 +43,13 @@ async function createChat(userId: string) {
       .doc(existingChatId)
       .collection("/messages")
       .add(stimulusChat);
+    let finalChat = (await chatCollection.doc(existingChatId).get()).data();
+
+    if (finalChat != undefined) {
+      finalChat["chatId"] = finalChat.id;
+    }
+
+    return finalChat;
   } else {
     let newChat: IChat = {
       members: [userId, friend],
@@ -44,19 +64,11 @@ async function createChat(userId: string) {
       time: Timestamp.now(),
     };
     chatCollection.doc(chat.id).collection("/messages").add(stimulusChat);
-  }
-
-  await userCollection.doc(userId).update({
-    lastConvo: Timestamp.now(),
-  });
-
-  if (validatePhoneForE164(friend)) {
-    //the user only has a phone Number
-    updateFriendPhoneNo(userCollection, userId, friend);
-  } else {
-    //this means the value is a User ID
-
-    await updateFriendID(userCollection, userId, friend);
+    let finalChat = (await chatCollection.doc(chat.id).get()).data();
+    if (finalChat != undefined) {
+      finalChat["chatId"] = chat.id;
+    }
+    return finalChat;
   }
 }
 
