@@ -14,7 +14,7 @@ async function createChat(userId: string) {
   const chatCollection = admin.firestore().collection("/chats");
   const userCollection = admin.firestore().collection("/users");
   const stimulus: string = await getStimulus();
-
+  console.log("Creating the chat");
   const sharedChatIds = await checkChatOverlap(chatCollection, userId, friend);
 
   await userCollection.doc(userId).update({
@@ -47,9 +47,8 @@ async function createChat(userId: string) {
 
     if (finalChat != undefined) {
       finalChat["chatId"] = finalChat.id;
+      return finalChat;
     }
-
-    return finalChat;
   } else {
     let newChat: IChat = {
       members: [userId, friend],
@@ -67,8 +66,8 @@ async function createChat(userId: string) {
     let finalChat = (await chatCollection.doc(chat.id).get()).data();
     if (finalChat != undefined) {
       finalChat["chatId"] = chat.id;
+      return finalChat;
     }
-    return finalChat;
   }
 }
 
