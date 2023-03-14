@@ -6,6 +6,7 @@ import { IChat, IMessage } from "../../models/chatSchema";
 import { updateFriendID, updateFriendPhoneNo } from "../user/updateFriends";
 import { getStimulus } from "../stimulus/selectQuestion";
 import { checkChatOverlap } from "./checkChatOverlap";
+import { IUser } from "../../models/userSchema";
 
 async function createChat(userId: string) {
   //creates a new chat based on an algorithum in Choose Friend
@@ -15,19 +16,7 @@ async function createChat(userId: string) {
   const userCollection = admin.firestore().collection("/users");
   const stimulus: string = await getStimulus();
   const sharedChatIds = await checkChatOverlap(chatCollection, userId, friend);
-
-  await userCollection.doc(userId).update({
-    lastConvo: Timestamp.now(),
-  });
-
-  if (validatePhoneForE164(friend)) {
-    //the user only has a phone Number
-    updateFriendPhoneNo(userCollection, userId, friend);
-  } else {
-    //this means the value is a User ID
-
-    await updateFriendID(userCollection, userId, friend);
-  }
+  let chatId = "";
 
   if (sharedChatIds.length != 0) {
     const existingChatId = sharedChatIds[0];
@@ -42,12 +31,7 @@ async function createChat(userId: string) {
       .doc(existingChatId)
       .collection("/messages")
       .add(stimulusChat);
-    let finalChat = (await chatCollection.doc(existingChatId).get()).data();
-
-    if (finalChat != undefined) {
-      finalChat["chatId"] = existingChatId;
-      return finalChat;
-    }
+    chatId = existingChatId;
   } else {
     let newChat: IChat = {
       members: [userId, friend],
@@ -62,12 +46,32 @@ async function createChat(userId: string) {
       time: Timestamp.now(),
     };
     chatCollection.doc(chat.id).collection("/messages").add(stimulusChat);
-    let finalChat = (await chatCollection.doc(chat.id).get()).data();
-    if (finalChat != undefined) {
-      finalChat["chatId"] = chat.id;
-      return finalChat;
-    }
+    chatId = chat.id;
   }
+  await userCollection.doc(userId).update({
+    lastConvo: Timestamp.now(),
+  });
+
+  if (validatePhoneForE164(friend)) {
+    //the user only has a phone Number
+    updateFriendPhoneNo(userCollection, userId, friend);
+  } else {
+    //this means the value is a User ID
+
+    await updateFriendID(userCollection, userId, friend);
+  }
+
+  let user = (await userCollection.doc(userId).get()).data() as IUser;
+
+  let friendInfo = user.friends.find(
+    (element) => element.userID == friend || element.friendsPhone == friend
+  );
+
+  return {
+    friend: friendInfo,
+    chatId: chatId,
+    stimulus: stimulus,
+  };
 }
 
 export { createChat };
