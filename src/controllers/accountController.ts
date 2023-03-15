@@ -3,6 +3,7 @@ import e, { Request, Response } from "express";
 import { IFriend, IUser } from "../models/userSchema";
 import * as admin from "firebase-admin";
 import { Timestamp } from "@google-cloud/firestore";
+import { uploadImage } from "../services/user/uploadProfile";
 
 // Create a new client
 
@@ -40,17 +41,20 @@ export default {
   },
   uploadProfilePhoto: async function (req: Request, res: Response) {
     //send the file to the server, then upload it to the firestore database
-    const image = req.body.file;
-
-    console.log(image);
-
-    if (!image) badRequestResponse(res);
-
-    // if (/^image/.test(image.mimetype)) return badRequestResponse(res);
-
-    const bucket = admin.storage().bucket();
-
-    successResponse(res, { image: image });
+    const myFile = req.file;
+    if (myFile != undefined) {
+      try {
+        const imageUrl = await uploadImage(
+          myFile,
+          admin.storage().bucket("profile_picture_maintaining_friendships")
+        );
+        successResponse(res, { imageURL: imageUrl });
+      } catch (error) {
+        badRequestResponse(res, error);
+      }
+    } else {
+      badRequestResponse(res, { error: "No file uploaded" });
+    }
 
     //bucket.file()
   },
