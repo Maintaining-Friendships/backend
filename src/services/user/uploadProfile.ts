@@ -10,11 +10,15 @@ import { format } from "url";
  *   "originalname" and "buffer" as keys
  */
 
-export const uploadImage = (file: Express.Multer.File, bucket: Bucket) =>
+export const uploadImage = (
+  file: Express.Multer.File,
+  bucket: Bucket,
+  userId: string
+) =>
   new Promise((resolve, reject) => {
-    const { originalname, buffer } = file;
+    const { buffer } = file;
+    const blob = bucket.file(`${userId}.jpg`);
 
-    const blob = bucket.file(originalname.replace(/ /g, "_"));
     const blobStream = blob.createWriteStream({
       resumable: false,
     });

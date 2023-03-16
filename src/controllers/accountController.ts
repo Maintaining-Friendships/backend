@@ -41,13 +41,23 @@ export default {
   },
   uploadProfilePhoto: async function (req: Request, res: Response) {
     //send the file to the server, then upload it to the firestore database
-    const myFile = req.file;
+    const myFile: Express.Multer.File | undefined = req.file;
+    const userId: string = req.body.userId;
+
     if (myFile != undefined) {
       try {
         const imageUrl = await uploadImage(
           myFile,
-          admin.storage().bucket("profile_picture_maintaining_friendships")
+          admin.storage().bucket("profile_picture_maintaining_friendships"),
+          userId
         );
+
+        const collection = admin.firestore().collection("/users");
+
+        await collection.doc(userId).update({
+          profilePicture: imageUrl,
+        });
+
         successResponse(res, { imageURL: imageUrl });
       } catch (error) {
         badRequestResponse(res, error);
