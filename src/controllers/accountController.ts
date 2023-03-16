@@ -41,6 +41,7 @@ export default {
   },
   uploadProfilePhoto: async function (req: Request, res: Response) {
     //send the file to the server, then upload it to the firestore database
+    //implement image compression later
     const myFile: Express.Multer.File | undefined = req.file;
     const userId: string = req.body.userId;
 
