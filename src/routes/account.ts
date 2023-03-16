@@ -5,7 +5,8 @@ import accountController from "../controllers/accountController";
 
 import multer from "multer";
 
-const upload = multer({ dest: "uploads/" });
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 router.post("/create-account", function (req: Request, res: Response) {
   return accountController.createAccount(req, res);
