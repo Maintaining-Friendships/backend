@@ -4,6 +4,7 @@ import { IFriend, IUser } from "../models/userSchema";
 import * as admin from "firebase-admin";
 import { Timestamp } from "@google-cloud/firestore";
 import { uploadImage } from "../services/user/uploadProfile";
+import getUserChats from "../services/chat/getUserChats";
 
 // Create a new client
 
@@ -77,8 +78,13 @@ export default {
     const snapshot = await collection.doc(userId).get();
 
     if (snapshot.exists) {
-      const userData = snapshot.data();
-      return successResponse(res, userData);
+      let userData = snapshot.data();
+
+      let createdChats = await getUserChats(userId);
+      if (userData) {
+        userData["chats"] = createdChats;
+        return successResponse(res, userData);
+      }
     } else {
       return badRequestResponse(res, { problem: "User not found" });
     }
