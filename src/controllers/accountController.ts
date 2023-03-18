@@ -21,11 +21,16 @@ export default {
       friends: [],
       lastConvo: null,
     };
+
     const request = await collection.add(newUser);
 
     let user = await request.get();
 
-    return successResponse(res, { user: user.data(), userId: user.id });
+    return successResponse(res, {
+      user: user.data(),
+      userId: user.id,
+      chats: [],
+    });
   },
 
   autoLoginUser: async function (req: Request, res: Response) {
