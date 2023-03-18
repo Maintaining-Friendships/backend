@@ -4,7 +4,7 @@ import * as admin from "firebase-admin";
 import { Timestamp } from "@google-cloud/firestore";
 import { IChat, IMessage } from "../../models/chatSchema";
 import { updateFriendID, updateFriendPhoneNo } from "../user/updateFriends";
-import { getStimulus } from "../stimulus/selectQuestion";
+import { getOpenAi, getStimulus } from "../stimulus/selectQuestion";
 import { checkChatOverlap } from "./checkChatOverlap";
 import { IUser } from "../../models/userSchema";
 
@@ -14,7 +14,7 @@ async function createChat(userId: string) {
   const friend: string = await chooseFriend(userId);
   const chatCollection = admin.firestore().collection("/chats");
   const userCollection = admin.firestore().collection("/users");
-  const stimulus: string = await getStimulus();
+  const stimulus: string = await getOpenAi();
   const sharedChatIds = await checkChatOverlap(chatCollection, userId, friend);
   let chatId = "";
 
