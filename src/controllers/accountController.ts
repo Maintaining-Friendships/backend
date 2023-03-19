@@ -3,6 +3,8 @@ import e, { Request, Response } from "express";
 import { IFriend, IUser } from "../models/userSchema";
 import * as admin from "firebase-admin";
 import { Timestamp } from "@google-cloud/firestore";
+import { uploadImage } from "../services/user/uploadProfile";
+import getUserChats from "../services/chat/getUserChats";
 
 // Create a new client
 
@@ -19,11 +21,16 @@ export default {
       friends: [],
       lastConvo: null,
     };
+
     const request = await collection.add(newUser);
 
     let user = await request.get();
 
-    return successResponse(res, { user: user.data(), userId: user.id });
+    return successResponse(res, {
+      user: user.data(),
+      userId: user.id,
+      chats: [],
+    });
   },
 
   autoLoginUser: async function (req: Request, res: Response) {
@@ -40,17 +47,31 @@ export default {
   },
   uploadProfilePhoto: async function (req: Request, res: Response) {
     //send the file to the server, then upload it to the firestore database
-    const image = req.body.file;
+    //implement image compression later
+    const myFile: Express.Multer.File | undefined = req.file;
+    const userId: string = req.body.userId;
 
-    console.log(image);
+    if (myFile != undefined) {
+      try {
+        const imageUrl = await uploadImage(
+          myFile,
+          admin.storage().bucket("profile_picture_maintaining_friendships"),
+          userId
+        );
 
-    if (!image) badRequestResponse(res);
+        const collection = admin.firestore().collection("/users");
 
-    // if (/^image/.test(image.mimetype)) return badRequestResponse(res);
+        await collection.doc(userId).update({
+          profilePicture: imageUrl,
+        });
 
-    const bucket = admin.storage().bucket();
-
-    successResponse(res, { image: image });
+        successResponse(res, { imageURL: imageUrl });
+      } catch (error) {
+        badRequestResponse(res, error);
+      }
+    } else {
+      badRequestResponse(res, { error: "No file uploaded" });
+    }
 
     //bucket.file()
   },
@@ -62,8 +83,13 @@ export default {
     const snapshot = await collection.doc(userId).get();
 
     if (snapshot.exists) {
-      const userData = snapshot.data();
-      return successResponse(res, userData);
+      let userData = snapshot.data();
+
+      let createdChats = await getUserChats(userId);
+      if (userData) {
+        userData["chats"] = createdChats;
+        return successResponse(res, userData);
+      }
     } else {
       return badRequestResponse(res, { problem: "User not found" });
     }

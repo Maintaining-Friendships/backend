@@ -14,11 +14,9 @@ export default {
     const userId = req.body.userId;
     //creates a new chat based on an algorithum in Choose Friend
     //the friend can either be a Phone Number or a User ID
-    const chat = createChat(userId);
+    const chat = await createChat(userId);
 
-    return successResponse(res, {
-      chat,
-    });
+    return successResponse(res, chat);
   },
   createChatCron: async function (req: Request, res: Response) {
     const usersRef = admin.firestore().collection("/users");
