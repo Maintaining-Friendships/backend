@@ -26,7 +26,7 @@ const getUserChats = async (userId: string) => {
 
     createdChats.push({
       friend: friendData,
-      stimulus: chatInfo.stimulus,
+      stimulus: chatInfo.prompts,
       chatId: chat.id,
       messages: messages,
     });

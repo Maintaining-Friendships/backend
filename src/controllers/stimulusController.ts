@@ -7,7 +7,7 @@ export default {
     //Function that returns an open ended question for people to talk about
     // Get a reference to the "items" collection
     //let stimulus: string = await getStimulus();
-    let openAiStimulus: string = await getOpenAi();
+    let openAiStimulus: string[] = await getOpenAi();
     successResponse(res, { openAiStimulus });
   },
 };

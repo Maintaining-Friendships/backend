@@ -33,11 +33,11 @@ const chooseFriend = async (userId: string): Promise<string> => {
     if (friendPoints >= currentHighestPts) {
       currentHighestPts = friendPoints;
 
-      if (friend.userID != null) {
-        reachOutTo = friend.userID;
-      } else {
-        reachOutTo = friend.friendsPhone;
-      }
+      // if (friend.userID != null) {
+      //   reachOutTo = friend.userID;
+      // } else {
+      reachOutTo = friend.friendsPhone;
+      //}
     }
   });
 

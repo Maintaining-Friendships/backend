@@ -11,7 +11,7 @@ declare global {
 
 export interface IChat {
   members: string[];
-  stimulus: string;
+  prompts: string[];
 }
 
 export interface IMessage {

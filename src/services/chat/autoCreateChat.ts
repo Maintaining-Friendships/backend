@@ -14,17 +14,17 @@ async function createChat(userId: string) {
   const friend: string = await chooseFriend(userId);
   const chatCollection = admin.firestore().collection("/chats");
   const userCollection = admin.firestore().collection("/users");
-  const stimulus: string = await getOpenAi();
+  const prompts: string[] = await getOpenAi();
   const sharedChatIds = await checkChatOverlap(chatCollection, userId, friend);
   let chatId = "";
 
   if (sharedChatIds.length != 0) {
     const existingChatId = sharedChatIds[0];
-    // Update the existing chat with the new stimulus
-    await chatCollection.doc(existingChatId).update({ stimulus: stimulus });
+    // Update the existing chat with the new prompts
+    await chatCollection.doc(existingChatId).update({ prompts: prompts });
     let stimulusChat: IMessage = {
       senderId: "adminBot",
-      message: stimulus,
+      message: prompts.toString(),
       time: Timestamp.now(),
     };
     chatCollection
@@ -35,17 +35,17 @@ async function createChat(userId: string) {
   } else {
     let newChat: IChat = {
       members: [userId, friend],
-      stimulus: stimulus,
+      prompts: prompts,
     };
 
     let chat = await chatCollection.add(newChat);
 
-    let stimulusChat: IMessage = {
-      senderId: "adminBot",
-      message: stimulus,
-      time: Timestamp.now(),
-    };
-    chatCollection.doc(chat.id).collection("/messages").add(stimulusChat);
+    // let stimulusChat: IMessage = {
+    //   senderId: "adminBot",
+    //   message: prompts.toString(),
+    //   time: Timestamp.now(),
+    // };
+    // chatCollection.doc(chat.id).collection("/messages").add(stimulusChat);
     chatId = chat.id;
   }
   await userCollection.doc(userId).update({
@@ -70,7 +70,7 @@ async function createChat(userId: string) {
   return {
     friend: friendInfo,
     chatId: chatId,
-    stimulus: stimulus,
+    stimulus: prompts,
   };
 }
 

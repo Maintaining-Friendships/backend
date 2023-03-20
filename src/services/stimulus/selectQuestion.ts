@@ -26,16 +26,16 @@ async function getStimulus(): Promise<string> {
   return randomQuestion.textBased;
 }
 
-async function getOpenAi(): Promise<string> {
+async function getOpenAi(): Promise<string[]> {
   const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
 
   const response = await openai.createCompletion({
-    model: "text-curie-001",
+    model: "text-davinci-003",
     prompt:
-      "Create an open-ended question to spark an interesting conversation",
+      "Generate 2 casual cold open conversation starters for a text conversation with an acquaintance. \n\nDesired format: An array of two prompts separated by three colons, always start each prompt with a greeting\nPrompt 1, Prompt 2\n\n\nExample:\nHey! How have you been:::  Hi, have you done anything exciting lately?\n\n",
     temperature: 0.7,
     max_tokens: 256,
     top_p: 1,
@@ -43,10 +43,12 @@ async function getOpenAi(): Promise<string> {
     presence_penalty: 0,
   });
 
-  if (response.data.choices[0].text) {
-    return response.data.choices[0].text.replace(/(\r\n|\n|\r)/gm, "");
+  if (response.data.choices[0].text?.split(":::")) {
+    return response.data.choices[0].text
+      ?.split(":::")
+      .map((value) => value.replace(/(\r\n|\n|\r)/gm, "")) as string[];
   } else {
-    return getStimulus();
+    return ["Hey, how are you", "Hey, its been awhile lets cautch up"];
   }
 }
 
