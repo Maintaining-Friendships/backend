@@ -42,7 +42,7 @@ export default {
     if (snapshot.exists) {
       return successResponse(res, { userCreated: true });
     } else {
-      return badRequestResponse(res, { problem: "User not found" });
+      return badRequestResponse(res, { userCreated: false });
     }
   },
   uploadProfilePhoto: async function (req: Request, res: Response) {
