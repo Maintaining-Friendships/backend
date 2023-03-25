@@ -167,6 +167,17 @@ export default {
       return successResponse(res, { createdFriend });
     }
   },
+  updateFCMToken: async function (req: Request, res: Response) {
+    const individualUserId: string = req.body.individualUserId;
+    const newFCMToken: string = req.body.fcmToken;
+    const usersCollection = admin.firestore().collection("/users");
+    const individualUser = usersCollection.doc(individualUserId);
+
+    await individualUser.update({
+      fcmToken: newFCMToken,
+    });
+    return successResponse(res);
+  },
 };
 
 interface ImageReq extends Request {

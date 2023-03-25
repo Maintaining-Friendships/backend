@@ -37,4 +37,8 @@ router.post("/login-user", function (req: Request, res: Response) {
   return accountController.autoLoginUser(req, res);
 });
 
+router.post("/update-fcm", function (req: Request, res: Response) {
+  return accountController.updateFCMToken(req, res);
+});
+
 export default router;
