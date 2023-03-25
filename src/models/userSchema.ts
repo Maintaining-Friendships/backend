@@ -16,6 +16,7 @@ export interface IUser {
   profilePicture: string;
   friends: IFriend[];
   lastConvo: Timestamp | null;
+  fcmToken: string | undefined;
 }
 
 export interface IFriend {

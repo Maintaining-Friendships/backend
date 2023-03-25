@@ -20,6 +20,7 @@ export default {
       profilePicture: "",
       friends: [],
       lastConvo: null,
+      fcmToken: req.body.fcmToken,
     };
 
     const request = await collection.add(newUser);
