@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import * as admin from "firebase-admin";
-import { successResponse } from "../middleware/responses";
+import { badRequestResponse, successResponse } from "../middleware/responses";
 import { IChat, IMessage } from "../models/chatSchema";
 import { createChat } from "../services/chat/autoCreateChat";
 import validatePhoneForE164 from "../services/validatePhone";
 import { Timestamp } from "@google-cloud/firestore";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import { sendMessage } from "../services/chat/sendMessage";
+import { IUser } from "../models/userSchema";
+import { sendNotificationToUser } from "../services/chat/sendNotification";
 
 export default {
   createChat: async function (req: Request, res: Response) {
@@ -65,5 +67,13 @@ export default {
     twiml.message("The Robots are coming! Head for the hills!");
 
     res.type("text/xml").send(twiml.toString());
+  },
+
+  sendNotification: async function (req: Request, res: Response) {
+    sendNotificationToUser(req.body.userId).then((notificationId) => {
+      if (notificationId != null) {
+        successResponse(res, { notificationID: notificationId });
+      }
+    });
   },
 };
