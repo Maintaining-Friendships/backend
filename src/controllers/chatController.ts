@@ -70,10 +70,10 @@ export default {
   },
 
   sendNotification: async function (req: Request, res: Response) {
-    sendNotificationToUser(req.body.userId).then((notificationId) => {
-      if (notificationId != null) {
-        successResponse(res, { notificationID: notificationId });
-      }
-    });
+    // sendNotificationToUser(req.body.userId, ).then((notificationId) => {
+    //   if (notificationId != null) {
+    //     successResponse(res, { notificationID: notificationId });
+    //   }
+    // });
   },
 };

@@ -1,29 +1,39 @@
 import * as admin from "firebase-admin";
 import { MessagingDevicesResponse } from "firebase-admin/lib/messaging/messaging-api";
-import { IUser } from "../../models/userSchema";
+import { IFriend, IUser } from "../../models/userSchema";
 
 async function sendNotificationToUser(
-  userId: string
+  userId: string,
+  friend: IFriend
 ): Promise<string | undefined> {
   const usersCollection = admin.firestore().collection("/users");
   const individualUser = (
     await usersCollection.doc(userId).get()
   ).data() as IUser;
-  var payload = {
-    notification: {
-      title: "Time to reach out!",
-      body: "Its been 20 days since you have talked to Esteban!",
-    },
-  };
 
-  if (individualUser.fcmToken != undefined) {
-    let response: MessagingDevicesResponse = await admin
-      .messaging()
-      .sendToDevice(individualUser.fcmToken, payload);
+  if (friend.lastReachedOut?.toDate().getTime()) {
+    const differenceInMilliseconds: number =
+      Date.now() - friend.lastReachedOut?.toDate().getTime();
+    const differenceInDays: number = Math.floor(
+      differenceInMilliseconds / (1000 * 60 * 60 * 24)
+    );
 
-    return response.results[0].messageId;
-  } else {
-    return undefined;
+    var payload = {
+      notification: {
+        title: "Time to reach out!",
+        body: `Its been ${differenceInDays} days since you have talked to ${friend.name}`,
+      },
+    };
+
+    if (individualUser.fcmToken != undefined) {
+      let response: MessagingDevicesResponse = await admin
+        .messaging()
+        .sendToDevice(individualUser.fcmToken, payload);
+
+      return response.results[0].messageId;
+    } else {
+      return undefined;
+    }
   }
 }
 
