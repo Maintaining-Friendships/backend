@@ -9,10 +9,10 @@ import { checkChatOverlap } from "./checkChatOverlap";
 import { IFriend, IUser } from "../../models/userSchema";
 import { sendNotificationToUser } from "./sendNotification";
 
-async function createChat(userId: string) {
+async function createChat(userId: string, friendId?: string) {
   //creates a new chat based on an algorithum in Choose Friend
   //the friend can either be a Phone Number or a User ID
-  const friend: string = await chooseFriend(userId);
+  const friend: string = friendId ?? (await chooseFriend(userId));
   const chatCollection = admin.firestore().collection("/chats");
   const userCollection = admin.firestore().collection("/users");
   const prompts: string[] = await getOpenAi();
@@ -68,7 +68,7 @@ async function createChat(userId: string) {
     (element) => element.userID == friend || element.friendsPhone == friend
   );
 
-  await sendNotificationToUser(userId, friendInfo as IFriend);
+  if (!friendId) await sendNotificationToUser(userId, friendInfo as IFriend);
 
   return {
     friend: friendInfo,

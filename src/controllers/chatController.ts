@@ -14,9 +14,10 @@ export default {
   createChat: async function (req: Request, res: Response) {
     //creates a new chat based on an algorithum in Choose Friend
     const userId = req.body.userId;
+    const friendID = req.body.friendId;
     //creates a new chat based on an algorithum in Choose Friend
     //the friend can either be a Phone Number or a User ID
-    const chat = await createChat(userId);
+    const chat = await createChat(userId, friendID);
 
     return successResponse(res, chat);
   },
