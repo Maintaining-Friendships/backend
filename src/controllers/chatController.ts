@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as admin from "firebase-admin";
 import { badRequestResponse, successResponse } from "../middleware/responses";
 import { IChat, IMessage } from "../models/chatSchema";
-import { createChat } from "../services/chat/autoCreateChat";
+import { createChat, suggestChat } from "../services/chat/autoCreateChat";
 import validatePhoneForE164 from "../services/validatePhone";
 import { Timestamp } from "@google-cloud/firestore";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
@@ -50,7 +50,7 @@ export default {
       });
     });
 
-    userIds.forEach(async (userId: string) => await createChat(userId));
+    userIds.forEach(async (userId: string) => await suggestChat(userId));
     successResponse(res, { ...userIds.entries });
   },
   sendMessage: async function (req: Request, res: Response) {

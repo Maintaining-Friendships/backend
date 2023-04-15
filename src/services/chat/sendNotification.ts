@@ -18,13 +18,15 @@ async function sendNotificationToUser(
       differenceInMilliseconds / (1000 * 60 * 60 * 24)
     );
 
-    var payload = {
+    var payload: admin.messaging.MessagingPayload = {
       notification: {
         title: "Time to reach out!",
         body: `Its been ${differenceInDays} days since you have talked to ${friend.name}`,
       },
+      data: {
+        friendId: friend.userID || "",
+      },
     };
-
     if (individualUser.fcmToken != undefined) {
       let response: MessagingDevicesResponse = await admin
         .messaging()
