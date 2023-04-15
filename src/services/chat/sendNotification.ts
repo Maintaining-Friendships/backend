@@ -24,14 +24,13 @@ async function sendNotificationToUser(
         body: `Its been ${differenceInDays} days since you have talked to ${friend.name}`,
       },
       data: {
-        friendId: friend.userID || "",
+        friendId: friend.friendsPhone || "",
       },
     };
     if (individualUser.fcmToken != undefined) {
       let response: MessagingDevicesResponse = await admin
         .messaging()
         .sendToDevice(individualUser.fcmToken, payload);
-
       return response.results[0].messageId;
     } else {
       return undefined;
