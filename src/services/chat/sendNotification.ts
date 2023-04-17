@@ -31,6 +31,7 @@ async function sendNotificationToUser(
       let response: MessagingDevicesResponse = await admin
         .messaging()
         .sendToDevice(individualUser.fcmToken, payload);
+      console.log(response.results[0].messageId);
       return response.results[0].messageId;
     } else {
       return undefined;

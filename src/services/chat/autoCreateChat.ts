@@ -77,17 +77,19 @@ async function createChat(userId: string, friendId?: string) {
   };
 }
 
-async function suggestChat(userId: string) {
+async function suggestChat(userId: string): Promise<string | undefined> {
   const friend: string = await chooseFriend(userId);
   const userCollection = admin.firestore().collection("/users");
 
   let user = (await userCollection.doc(userId).get()).data() as IUser;
 
+  console.log(user.firstName);
   let friendInfo = user.friends.find(
     (element) => element.userID == friend || element.friendsPhone == friend
   );
 
-  await sendNotificationToUser(userId, friendInfo as IFriend);
+  let messageId = await sendNotificationToUser(userId, friendInfo as IFriend);
+  return messageId;
 }
 
 export { createChat, suggestChat };

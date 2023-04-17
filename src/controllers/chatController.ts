@@ -50,8 +50,13 @@ export default {
       });
     });
 
-    userIds.forEach(async (userId: string) => await suggestChat(userId));
-    successResponse(res, { ...userIds.entries });
+    await Promise.all(
+      Array.from(userIds).map(
+        async (userId: string) => await suggestChat(userId)
+      )
+    );
+
+    successResponse(res, { userIds: userIds.entries() });
   },
   sendMessage: async function (req: Request, res: Response) {
     const chatId = req.body.chatId;
@@ -71,10 +76,10 @@ export default {
   },
 
   sendNotification: async function (req: Request, res: Response) {
-    // sendNotificationToUser(req.body.userId, ).then((notificationId) => {
-    //   if (notificationId != null) {
-    //     successResponse(res, { notificationID: notificationId });
-    //   }
-    // });
+    suggestChat(req.body.userId).then((notificationId) => {
+      if (notificationId != null) {
+        successResponse(res, { notificationID: notificationId });
+      }
+    });
   },
 };
