@@ -167,6 +167,30 @@ export default {
       return successResponse(res, { createdFriend });
     }
   },
+  addMultipleFriends: async function (req: Request, res: Response) {
+    const friends: [] = req.body.friends;
+    const individualUserId: string = req.body.individualUserId;
+    const usersCollection = admin.firestore().collection("/users");
+    const individualUser = usersCollection.doc(individualUserId);
+
+    let ifriendSet = new Set();
+    friends.forEach((friend) => {
+      let newFriend: IFriend = {
+        userID: null,
+        importance: 5,
+        lastReachedOut: Timestamp.now(),
+        friendsPhone: friend["friendsPhone"],
+        name: friend["friendName"],
+      };
+
+      ifriendSet.add(newFriend);
+    });
+
+    const createdFriend = await individualUser.update({
+      friends: admin.firestore.FieldValue.arrayUnion(...ifriendSet),
+    });
+    return successResponse(res, { createdFriend });
+  },
   updateFCMToken: async function (req: Request, res: Response) {
     const individualUserId: string = req.body.individualUserId;
     const newFCMToken: string = req.body.fcmToken;

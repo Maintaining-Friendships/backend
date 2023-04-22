@@ -41,4 +41,8 @@ router.post("/update-fcm", function (req: Request, res: Response) {
   return accountController.updateFCMToken(req, res);
 });
 
+router.post("/add-multiple-friends", function (req: Request, res: Response) {
+  return accountController.addMultipleFriends(req, res);
+});
+
 export default router;
